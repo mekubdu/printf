@@ -1,47 +1,69 @@
 #include "main.h"
-
 /**
- * print_hex - Prints a representation of a decimal number on base16 lowercase
- * @list: List of the arguments passed to the function
- * Return: Number of characters printed
- */
-
-int print_hex(va_list list)
+* print_hex - function that prints an unsigned int in hexadecimal
+* @n: unsigned to be printed
+* @c: case of printing (0 = lower, 1 = upper)
+* Descriptions: prints unsigned in hexadecimal with _putchar
+* Return: size the output
+*/
+int print_hex(unsigned int n, unsigned int c)
 {
-	unsigned int num;
-	int len;
-	int rem_num;
-	char *hex_rep;
-	char *rev_hex;
+	unsigned int len, powten, j, digit, num;
+	int count = 0;
+	char diff;
 
-	num = va_arg(list, unsigned int);
-
-	if (num == 0)
-		return (_putchar('0'));
-	if (num < 1)
-		return (-1);
-	len = base_len(num, 16);
-	hex_rep = malloc(sizeof(char) * len + 1);
-	if (hex_rep == NULL)
-		return (-1);
-	for (len = 0; num > 0; len++)
+	if (n != 0)
 	{
-		rem_num = num % 16;
-		if (rem_num > 9)
-		{
-			rem_num = hex_check(rem_num, 'x');
-			hex_rep[len] = rem_num;
-		}
+		num = n;
+		len = 0;
+		if (c)
+			diff = 'A' - ':';
 		else
-			hex_rep[len] = rem_num + 48;
-		num = num / 16;
+			diff = 'a' - ':';
+		while (num != 0)
+		{
+			num /= 16;
+			len++;
+		}
+		powten = 1;
+		for (j = 1; j <= len - 1; j++)
+			powten *= 16;
+		for (j = 1; j <= len; j++)
+		{
+			digit = n / powten;
+			if (digit < 10)
+				_putchar(digit + '0');
+			else
+				_putchar(digit + '0' + diff);
+			count++;
+			n -= digit * powten;
+			powten /= 16;
+		}
 	}
-	hex_rep[len] = '\0';
-	rev_hex = rev_string(hex_rep);
-	if (rev_hex == NULL)
-		return (-1);
-	write_base(rev_hex);
-	free(hex_rep);
-	free(rev_hex);
-	return (len);
+	else
+	{
+		_putchar('0');
+		return (1);
+	}
+	return (count);
+}
+/**
+* print_x - takes an unsigned int an prints it in lowercase hex
+* @x: unsigned int to print
+* Descriptions: prints in lowercase hex with _putchar
+* Return: size of the output
+*/
+int print_x(va_list x)
+{
+	return (print_hex(va_arg(x, unsigned int), 0));
+}
+/**
+* print_X - takes an unsigned int an prints it in uppercase hex
+* @X: unsigned int to print
+* Descriptions: prints in uppercase hex with _putchar
+* Return: size of the output
+*/
+int print_X(va_list X)
+{
+	return (print_hex(va_arg(X, unsigned int), 1));
 }
